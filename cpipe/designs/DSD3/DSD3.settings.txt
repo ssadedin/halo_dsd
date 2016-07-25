@@ -1,0 +1,70 @@
+// vim: ts=4:sw=4:expandtab:cindent
+
+extract_amplicon_fasta = {
+
+    doc "Extracts FASTA for amplicons in the given BED file"
+
+    requires AMPLICON_BED : "File of amplicons provided by Agilent"
+
+    output.dir = "prep"
+
+    // Note: encountered design files with both Amplicons and amplicons capitalization
+    from(AMPLICON_BED) { transform(".bed") to(".fasta") { 
+        exec """
+           grep chr $input.bed | cut -f 1,2,3 | cut -f 1,2,3 | sort -k 1,1 -k2,2n -k3,3n | uniq | $BEDTOOLS/bin/bedtools getfasta -bed - -fi $HGFA -fo $output.fasta
+
+           $SAMTOOLS/samtools faidx $output.fasta
+        """
+    }}
+}
+
+amplicon_trim = {
+    output.dir = "prep"
+    filter("atrim","atrim") {
+        exec """
+            JAVA_OPTS=-Xmx4g $GROOVY $DSDSRC/AmpliconTrim.groovy 
+                -1 $input1.gz 
+                -2 $input2.gz 
+                -t1 $output1.gz 
+                -t2 $output2.gz 
+                -f $input.fasta > ${output.gz.prefix}.log
+        ""","amplicon_trim"
+    }
+}
+
+trim_fastq = segment {
+    amplicon_trim
+}
+
+dedup = {
+  println "Deduplication disabled for HaloPlex analysis"
+  alias input.bam to output.bam
+}
+
+call_variants_hc = call_variants_ug
+
+check_ontarget_perc = {
+    println "On target percentage check disabled for HaloPlex analysis"
+}
+
+init_analysis_profile = segment {
+    extract_amplicon_fasta
+}
+
+// Enable output of the family based VCF
+enable_family_excel = true
+
+enable_snpeff = true
+
+// Need to customise the fastqc checks
+CHECK_FASTQC_FAILURES=false
+
+VARIANT_DB="$BASE/variants.dsd.db"
+
+with_sex_karyotype=true
+
+EXOME_TARGET="../design/DSD3.bed"
+
+println "Loaded awesome haloplex settings"
+
+
