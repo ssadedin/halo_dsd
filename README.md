@@ -13,6 +13,8 @@ repository contains source code for components and pipeline changes needed to cu
 The customisations include:
 
  * Add custom trimming of FASTQ files to remove adapter contamination
+   - See details of the [custom trimming implementation](docs/AmpliconTrim.md) 
+
  * Remove PCR deduplication step from Cpipe
  * Disable some downstream checks for metrics that are not applicable to Cpipe 
    (eg: duplication rate)
@@ -27,6 +29,5 @@ http://cpipeline.org
 Then add the HaloPlex settings in cpipe/designs/DSD3/DSD3.settings.txt to an
 analysis profile for the Cpipe installation. Samples configured using the 
 DSD3 analysis profile will be analysed using the above customised steps.
-
 
 
