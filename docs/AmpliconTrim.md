@@ -49,21 +49,21 @@ the sequencing reads themselves. The algorithm then proceeds as follows:
  3. Similarly, every prefix of the reverse complement of A is also added to the list
  4. The entire prefix list is then sorted in order of descending length
  5. Each read pair consisting of R1 and R2 is then processed in turn. For each pair:
-    i.   the adapter sequence prefixes are taken in order of decreasing size
-    ii.  each adapter sequence prefix is searched within the R1 to find the last index at which 
+  i.   the adapter sequence prefixes are taken in order of decreasing size
+  ii.  each adapter sequence prefix is searched within the R1 to find the last index at which 
          the prefix occurs (if it is found)
-    iii. the first match that is identified terminates the search, resulting in the longest matching
+  iii. the first match that is identified terminates the search, resulting in the longest matching
          prefix, and the index at which it occurred within the read
-    iv.  if no match is identified, the read pair is left untrimmed
-    v.   the putative adapter sequence is removed from both R1 and R2, including all subsequent bases
-    vi.  after removal of adapter sequence, the body of the reads is expected to be identical 
+  iv.  if no match is identified, the read pair is left untrimmed
+  v.   the putative adapter sequence is removed from both R1 and R2, including all subsequent bases
+  vi.  after removal of adapter sequence, the body of the reads is expected to be identical 
          after taking the reverse complement of R2. The first 10 bases (by default) are tested for a
          match between the start of R1 and the end of R2
-    vii. if no match exists, steps 5.ii - 5.vi are repeated, searching for progressively shorter
+  vii. if no match exists, steps 5.ii - 5.vi are repeated, searching for progressively shorter
          adapter sequence matches
-    viii. the first 10 bases of the body of the reads is searched in the amplicon index. If no amplicon
+  viii. the first 10 bases of the body of the reads is searched in the amplicon index. If no amplicon
           exists starting with the read body, trimming is aborted for the read pair
-    ix.  Finally, a full Needleman-Wunsch alignment is performed to align the read body with the
+  ix.  Finally, a full Needleman-Wunsch alignment is performed to align the read body with the
          identified amplicon body. If a sufficient alignment score is observed, the trimmed body of the 
          reads is written to the output instead of the original reads.
 
